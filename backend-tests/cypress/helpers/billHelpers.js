@@ -1,6 +1,6 @@
 const faker = require ('faker')
 const ENDPOINT_GET_BILLS = 'http://localhost:3000/api/bills'
-const ENDPOINT_GET_BILL = 'http://localhost:3000/api/bill'
+const ENDPOINT_GET_BILL = 'http://localhost:3000/api/bill/'
 const ENDPOINT_POST_BILL = 'http://localhost:3000/api/bill/new'
 
 function billPayload(){
@@ -49,12 +49,11 @@ function deleteBill(cy){
             }
         })
         .then((response =>{
-            const responseAsString = JSON.stringify(response)
+            const responseAsString = JSON.stringify(response.body)
             expect (responseAsString).to.have.string("true")
         }))
     }))
 }
-
 module.exports = {
     createBill,
     deleteBill 

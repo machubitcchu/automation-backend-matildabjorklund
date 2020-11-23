@@ -1,6 +1,6 @@
 const faker = require ('faker')
 const ENDPOINT_GET_CLIENTS = 'http://localhost:3000/api/clients'
-const ENDPOINT_GET_CLIENT = 'http://localhost:3000/api/client'
+const ENDPOINT_GET_CLIENT = 'http://localhost:3000/api/client/'
 const ENDPOINT_POST_CLIENT = 'http://localhost:3000/api/client/new'
 
 function clientPayload(){
@@ -8,6 +8,18 @@ function clientPayload(){
     const fakeMail = faker.internet.email()
     const fakePhone = faker.phone.phoneNumber()
     const payload = {
+        "name": fakeName,
+        "email": fakeMail,
+        "telephone": fakePhone
+    }
+    return payload
+}
+function editPayload(id){
+    const fakeName = faker.name.findName()
+    const fakeMail = faker.internet.email()
+    const fakePhone = faker.phone.phoneNumber()
+    const payload = {
+        "id": id,
         "name": fakeName,
         "email": fakeMail,
         "telephone": fakePhone
@@ -42,8 +54,9 @@ function editClient(cy){
             'X-User-Auth': JSON.stringify(Cypress.env().loginToken)
         }
     }).then((response =>{
-        let lastId = response.body[response.body.length -1].id
-        let updateClient = clientPayload(lastId)
+        // let lastId = response.body[response.body.length-1].id
+        let lastId = response.body[2].id
+        let updateClient = editPayload(lastId)
         cy.request({
             method: "PUT",
             url: ENDPOINT_GET_CLIENT+lastId,
@@ -54,11 +67,8 @@ function editClient(cy){
             body: updateClient
         })
         .then((response =>{
-            cy.log(response)
-            expect(response.body).to.have.property(updateClient.name)
-            expect(response.body).to.have.property(updateClient.email)
-            expect(response.body).to.have.property(updateClient.telephone)
-
+            const responseAsString = JSON.stringify(response)
+            expect(responseAsString).to.have.string(updateClient.name)
         }))
     }))  
 }
